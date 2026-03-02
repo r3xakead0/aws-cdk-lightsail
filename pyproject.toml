@@ -1,7 +1,7 @@
 [project]
 name = "aws-cdk-lightsail"
 version = "0.1.0"
-description = "Proyecto CDK (Python + uv) para aprovisionar Lightsail con IP estática"
+description = "CDK project (Python + uv) that provisions a Lightsail instance with a static IP"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

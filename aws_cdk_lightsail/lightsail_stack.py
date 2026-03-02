@@ -35,21 +35,21 @@ def _load_user_data(path_value: str | None) -> str | None:
 
     if not candidate.exists():
         raise FileNotFoundError(
-            f"El archivo de user data '{candidate}' no existe"
+            f"The user data file '{candidate}' does not exist."
         )
 
     content = candidate.read_text()
     byte_length = len(content.encode("utf-8"))
     if byte_length > MAX_USER_DATA_BYTES:
         raise ValueError(
-            "El script de user data excede el límite de 64 KiB para Lightsail"
+            "User data exceeds the 64 KiB Lightsail limit."
         )
 
     return content
 
 
 class AwsCdkLightsailStack(cdk.Stack):
-    """Stack que crea un servidor Lightsail y le asigna una IP estática."""
+    """Stack that provisions a Lightsail instance and attaches a static IP."""
 
     def __init__(self, scope: cdk.App, construct_id: str, **kwargs: Any) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -70,7 +70,7 @@ class AwsCdkLightsailStack(cdk.Stack):
 
         instance_props: dict[str, Any] = {
             "blueprint_id": "ubuntu_22_04",
-            "bundle_id": "medium_2",
+            "bundle_id": "medium_2_0",
             "instance_name": instance_name,
             "availability_zone": availability_zone,
             "key_pair_name": "LightsailDefaultKeyPair",
@@ -93,20 +93,20 @@ class AwsCdkLightsailStack(cdk.Stack):
             self,
             "LightsailInstanceName",
             value=instance.instance_name,
-            description="Nombre final del servidor Lightsail",
+            description="Final Lightsail instance name",
         )
         cdk.CfnOutput(
             self,
             "LightsailStaticIp",
             value=static_ip.attr_ip_address,
-            description="Dirección IP estática asignada al servidor",
+            description="Allocated static IP address",
         )
         cdk.CfnOutput(
             self,
             "LightsailPublicDns",
             value=instance.attr_public_ip_address,
             description=(
-                "Lightsail no expone un hostname por CloudFormation; se usa la IP pública"
+                "Lightsail does not expose a hostname via CloudFormation, so the public IP is repeated."
             ),
         )
 
