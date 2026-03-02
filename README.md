@@ -40,7 +40,7 @@ uv run cdk deploy \
 ```
 
 ## Sample user data file
-A ready-to-use script lives at `user-data/sample-user-data.sh`. It updates the OS, installs NGINX, writes a simple landing page, and enables the service. You can duplicate or modify it and point the stack to your version via `-c userDataFile=...`.
+`user-data/sample-user-data.sh` updates the OS, installs NGINX, and publishes a landing page that prints the instance hostname plus its current public/static IPv4 (queried from the instance metadata service). Duplicate or adjust this script and point the stack to your version via `-c userDataFile=...`.
 
 ## Stack outputs
 - `LightsailInstanceName`: final Lightsail resource name.

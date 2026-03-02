@@ -1,5 +1,6 @@
 #!/bin/bash
-set -euo pipefail
+# Fail fast on errors/unbound vars; pipefail unsupported in sh-compatible runners
+set -euo
 LOG_FILE="/var/log/user-data-bootstrap.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
@@ -9,6 +10,7 @@ apt-get update -y
 DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
 
 SERVER_HOSTNAME="$(hostname)"
+PUBLIC_IPV4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || hostname -I | awk '{print $1}')"
 
 cat <<HTML >/var/www/html/index.html
 <!doctype html>
@@ -26,9 +28,9 @@ cat <<HTML >/var/www/html/index.html
   <body>
     <div class="card">
       <h1>Lightsail ready!</h1>
-      <p>This server was provisioned by <code>aws-cdk-lightsail</code>.</p>
+      <p>This server was provisioned by <code>aws-cdk-lightsail</code></p>
       <p>Hostname: <code>${SERVER_HOSTNAME}</code></p>
-      <p>Instance metadata is available via <code>curl -s http://169.254.169.254/latest/meta-data/</code>.</p>
+      <p>Public IPv4 (static): <code>${PUBLIC_IPV4}</code></p>
     </div>
   </body>
 </html>

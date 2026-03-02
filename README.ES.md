@@ -41,18 +41,12 @@ uv run cdk deploy \
 ```
 
 ## Ejemplo de archivo user data
-Se incluye un script listo para usarse en `user-data/sample-user-data.sh`. Actualiza el sistema operativo, instala NGINX, publica una página simple y habilita el servicio. Copia o ajusta este archivo y pásalo con `-c userDataFile=...` si necesitas lógica personalizada.
+Se incluye un script listo para usarse en `user-data/sample-user-data.sh`. Actualiza el sistema operativo, instala NGINX, publica una página con el hostname y la IP pública estática (consultada al servicio de metadatos) y habilita el servicio. Copia o ajusta este archivo y pásalo con `-c userDataFile=...` si necesitas lógica personalizada.
 
 ## Salidas del stack
 - `LightsailInstanceName`: nombre final del recurso en Lightsail.
 - `LightsailStaticIp`: dirección IP estática asignada (también visible en la consola de Lightsail).
 - `LightsailPublicDns`: IP pública reportada por Lightsail (CloudFormation no expone un hostname, por lo que se repite la IP pública).
-
-## Limpieza
-Para evitar cargos, ejecuta `uv run cdk destroy` y verifica en la consola de Lightsail que la instancia y la IP estática hayan sido eliminadas.
-
-## Licencia
-Este proyecto está licenciado bajo la licencia MIT: consulte el archivo [LICENSE](LICENSE) para obtener más detalles.
 
 ## Workflows de GitHub Actions
 En `.github/workflows` encontrarás dos pipelines manuales (se lanzan con **Run workflow**):
@@ -61,3 +55,9 @@ En `.github/workflows` encontrarás dos pipelines manuales (se lanzan con **Run 
 2. **Destroy Lightsail Stack** (`destroy.yml`): repite la preparación pero ejecuta `uv run cdk destroy --force`.
 
 Ambos requieren credenciales de AWS configuradas como secretos del repositorio/organización (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` y opcionalmente `AWS_SESSION_TOKEN` si usas credenciales temporales).
+
+## Limpieza
+Para evitar cargos, ejecuta `uv run cdk destroy` y verifica en la consola de Lightsail que la instancia y la IP estática hayan sido eliminadas.
+
+## Licencia
+Este proyecto está licenciado bajo la licencia MIT: consulte el archivo [LICENSE](LICENSE) para obtener más detalles.

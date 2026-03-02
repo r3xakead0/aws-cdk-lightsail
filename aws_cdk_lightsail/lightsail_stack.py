@@ -78,6 +78,30 @@ class AwsCdkLightsailStack(cdk.Stack):
         }
         if user_data:
             instance_props["user_data"] = user_data
+        instance_props["networking"] = lightsail.CfnInstance.NetworkingProperty(
+            ports=[
+                lightsail.CfnInstance.PortProperty(
+                    access_direction="inbound",
+                    access_from="0.0.0.0/0",
+                    access_type="public",
+                    cidrs=["0.0.0.0/0"],
+                    ipv6_cidrs=["::/0"],
+                    protocol="tcp",
+                    from_port=80,
+                    to_port=80,
+                ),
+                lightsail.CfnInstance.PortProperty(
+                    access_direction="inbound",
+                    access_from="0.0.0.0/0",
+                    access_type="public",
+                    cidrs=["0.0.0.0/0"],
+                    ipv6_cidrs=["::/0"],
+                    protocol="tcp",
+                    from_port=22,
+                    to_port=22,
+                ),
+            ]
+        )
 
         instance = lightsail.CfnInstance(self, "LightsailInstance", **instance_props)
 
