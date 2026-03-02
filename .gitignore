@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.uv/
+
+# AWS CDK artifacts
+cdk.out/
+.cdk.staging/
+
+# Misc tooling
+.pytest_cache/
+.mypy_cache/
+.idea/
+.vscode/
