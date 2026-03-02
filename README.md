@@ -1,6 +1,6 @@
 # AWS CDK Lightsail
 
-Python project managed with [`uv`](https://docs.astral.sh/uv/) that deploys an Amazon Lightsail instance (Ubuntu 22.04, Small bundle 2 vCPU / 4 GB) and attaches a static IP. The stack references the existing `LightsailDefaultKeyPair` to enable SSH access.
+Python project managed with [`uv`](https://docs.astral.sh/uv/) that deploys an Amazon Lightsail instance (Ubuntu 22.04, Medium bundle 2 vCPU / 4 GB) and attaches a static IP. The stack references the existing `LightsailDefaultKeyPair` to enable SSH access.
 
 ## Requirements
 - Python 3.11 and `uv` ≥ 0.4 (`pip install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`).
@@ -46,6 +46,14 @@ A ready-to-use script lives at `user-data/sample-user-data.sh`. It updates the O
 - `LightsailInstanceName`: final Lightsail resource name.
 - `LightsailStaticIp`: allocated static IP (also visible in the Lightsail console).
 - `LightsailPublicDns`: public IP reported by Lightsail (CloudFormation does not expose a hostname).
+
+## GitHub Actions workflows
+Located in `.github/workflows` and triggered manually via **Run workflow** in GitHub:
+
+1. **Deploy Lightsail Stack** (`deploy.yml`): installs toolchains, applies optional context overrides, and runs `uv run cdk deploy --require-approval never`.
+2. **Destroy Lightsail Stack** (`destroy.yml`): mirrors the setup but runs `uv run cdk destroy --force`.
+
+Both workflows expect AWS credentials to be available as repo/organization secrets named `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and (if using temporary credentials) `AWS_SESSION_TOKEN`. Optional manual inputs let you override `instanceName`, `availabilityZone`, and `userDataFile`, plus the AWS region (default `us-east-1`).
 
 ## Cleanup
 To avoid ongoing charges, run `uv run cdk destroy` and confirm in the Lightsail console that both the instance and static IP were removed.

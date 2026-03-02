@@ -1,6 +1,6 @@
 # AWS CDK Lightsail
 
-Proyecto base en Python administrado con `uv` que despliega una instancia de Amazon Lightsail (Ubuntu 22.04, bundle Small 2 vCPU/4 GB) y le asigna una IP estática. El stack referencia el par de claves existente `LightsailDefaultKeyPair` para permitir el acceso por SSH.
+Proyecto base en Python administrado con `uv` que despliega una instancia de Amazon Lightsail (Ubuntu 22.04, bundle Medium 2 vCPU/4 GB) y le asigna una IP estática. El stack referencia el par de claves existente `LightsailDefaultKeyPair` para permitir el acceso por SSH.
 
 ## Requisitos
 - Python 3.11 + [`uv`](https://docs.astral.sh/uv/) ≥ 0.4 (`pip install uv` o `curl -LsSf https://astral.sh/uv/install.sh | sh`).
@@ -53,3 +53,11 @@ Para evitar cargos, ejecuta `uv run cdk destroy` y verifica en la consola de Lig
 
 ## Licencia
 Este proyecto está licenciado bajo la licencia MIT: consulte el archivo [LICENSE](LICENSE) para obtener más detalles.
+
+## Workflows de GitHub Actions
+En `.github/workflows` encontrarás dos pipelines manuales (se lanzan con **Run workflow**):
+
+1. **Deploy Lightsail Stack** (`deploy.yml`): instala dependencias y ejecuta `uv run cdk deploy --require-approval never`, aceptando overrides opcionales (`instanceName`, `availabilityZone`, `userDataFile`) y la región AWS (por defecto `us-east-1`).
+2. **Destroy Lightsail Stack** (`destroy.yml`): repite la preparación pero ejecuta `uv run cdk destroy --force`.
+
+Ambos requieren credenciales de AWS configuradas como secretos del repositorio/organización (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` y opcionalmente `AWS_SESSION_TOKEN` si usas credenciales temporales).

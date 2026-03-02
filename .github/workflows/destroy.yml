@@ -1,0 +1,84 @@
+name: Destroy Lightsail Stack
+
+on:
+  workflow_dispatch:
+    inputs:
+      aws_region:
+        description: "Target AWS region (e.g., us-east-1)"
+        required: false
+        default: "us-east-1"
+        type: string
+      instance_name:
+        description: "Override for Lightsail instance name prefix"
+        required: false
+        type: string
+      availability_zone:
+        description: "Override Lightsail availability zone"
+        required: false
+        type: string
+      user_data_file:
+        description: "Path (relative to repo) to user data script"
+        required: false
+        type: string
+
+jobs:
+  destroy:
+    name: Destroy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      AWS_REGION: ${{ inputs.aws_region }}
+      INSTANCE_NAME: ${{ inputs.instance_name }}
+      AVAILABILITY_ZONE: ${{ inputs.availability_zone }}
+      USER_DATA_FILE: ${{ inputs.user_data_file }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install AWS CDK CLI
+        run: npm install -g aws-cdk@latest
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Destroy stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [[ -n "${INSTANCE_NAME}" ]]; then
+            ARGS+=( -c instanceName="${INSTANCE_NAME}" )
+          fi
+          if [[ -n "${AVAILABILITY_ZONE}" ]]; then
+            ARGS+=( -c availabilityZone="${AVAILABILITY_ZONE}" )
+          fi
+          if [[ -n "${USER_DATA_FILE}" ]]; then
+            ARGS+=( -c userDataFile="${USER_DATA_FILE}" )
+          fi
+          if ((${#ARGS[@]})); then
+            uv run cdk destroy --force "${ARGS[@]}"
+          else
+            uv run cdk destroy --force
+          fi
